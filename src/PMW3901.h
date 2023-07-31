@@ -20,16 +20,16 @@
  * SOFTWARE.
  */
 
-#ifndef __BITCRAZE_PMW3901_H__
-#define __BITCRAZE_PMW3901_H__
+#ifndef __PMW3901_H__
+#define __PMW3901_H__
 
 #include "Arduino.h"
 
 #include <stdint.h>
 
-class Bitcraze_PMW3901 {
+class PMW3901 {
 public:
-  Bitcraze_PMW3901(uint8_t cspin);
+  PMW3901(uint8_t cspin);
 
   boolean begin(void);
 
@@ -47,4 +47,4 @@ private:
   void initRegisters(void);
 };
 
-#endif //__BITCRAZE_PMW3901_H__
+#endif //__PMW3901_H__

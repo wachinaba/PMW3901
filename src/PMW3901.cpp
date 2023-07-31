@@ -19,19 +19,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+#include "Arduino.h"
 
-#include "Bitcraze_PMW3901.h"
+#include "PMW3901.h"
 
 #include <SPI.h>
 
 #define CHIP_ID         0x49  // 01001001
 #define CHIP_ID_INVERSE 0xB6  // 10110110
 
-Bitcraze_PMW3901::Bitcraze_PMW3901(uint8_t cspin)
+PMW3901::PMW3901(uint8_t cspin)
   : _cs(cspin)
 { }
 
-boolean Bitcraze_PMW3901::begin(void) {
+boolean PMW3901::begin(void) {
   // Setup SPI port
   SPI.begin();
   pinMode(_cs, OUTPUT);
@@ -73,14 +74,14 @@ boolean Bitcraze_PMW3901::begin(void) {
 
 // Functional access
 
-void Bitcraze_PMW3901::readMotionCount(int16_t *deltaX, int16_t *deltaY)
+void PMW3901::readMotionCount(int16_t *deltaX, int16_t *deltaY)
 {
   registerRead(0x02);
   *deltaX = ((int16_t)registerRead(0x04) << 8) | registerRead(0x03);
   *deltaY = ((int16_t)registerRead(0x06) << 8) | registerRead(0x05);
 }
 
-void Bitcraze_PMW3901::enableFrameBuffer()
+void PMW3901::enableFrameBuffer()
 {
 
   registerWrite(0x7F, 0x07);  //Magic frame readout registers
@@ -105,7 +106,7 @@ void Bitcraze_PMW3901::enableFrameBuffer()
   delayMicroseconds(50);
 }
 
-void Bitcraze_PMW3901::readFrameBuffer(char *FBuffer)
+void PMW3901::readFrameBuffer(char *FBuffer)
 {
   int count = 0;
   uint8_t a; //temp value for reading register
@@ -146,7 +147,7 @@ void Bitcraze_PMW3901::readFrameBuffer(char *FBuffer)
 }
 
 // Low level register access
-void Bitcraze_PMW3901::registerWrite(uint8_t reg, uint8_t value) {
+void PMW3901::registerWrite(uint8_t reg, uint8_t value) {
   reg |= 0x80u;
 
   SPI.beginTransaction(SPISettings(4000000, MSBFIRST, SPI_MODE3));
@@ -165,7 +166,7 @@ void Bitcraze_PMW3901::registerWrite(uint8_t reg, uint8_t value) {
   delayMicroseconds(200);
 }
 
-uint8_t Bitcraze_PMW3901::registerRead(uint8_t reg) {
+uint8_t PMW3901::registerRead(uint8_t reg) {
   reg &= ~0x80u;
 
   SPI.beginTransaction(SPISettings(4000000, MSBFIRST, SPI_MODE3));
@@ -188,7 +189,7 @@ uint8_t Bitcraze_PMW3901::registerRead(uint8_t reg) {
 }
 
 // Performance optimisation registers
-void Bitcraze_PMW3901::initRegisters()
+void PMW3901::initRegisters()
 {
   registerWrite(0x7F, 0x00);
   registerWrite(0x61, 0xAD);
@@ -267,7 +268,7 @@ void Bitcraze_PMW3901::initRegisters()
   registerWrite(0x40, 0x80);
 }
 
-void Bitcraze_PMW3901::setLed(bool ledOn)
+void PMW3901::setLed(bool ledOn)
 {
   delay(200);
   registerWrite(0x7f, 0x14);
