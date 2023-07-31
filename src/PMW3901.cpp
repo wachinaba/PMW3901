@@ -74,11 +74,12 @@ boolean PMW3901::begin(void) {
 
 // Functional access
 
-void PMW3901::readMotionCount(int16_t *deltaX, int16_t *deltaY)
+void PMW3901::readMotionCount(int16_t *deltaX, int16_t *deltaY, uint8_t *squal)
 {
   registerRead(0x02);
   *deltaX = ((int16_t)registerRead(0x04) << 8) | registerRead(0x03);
   *deltaY = ((int16_t)registerRead(0x06) << 8) | registerRead(0x05);
+  *squal = registerRead(0x07);
 }
 
 void PMW3901::enableFrameBuffer()

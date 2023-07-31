@@ -34,7 +34,7 @@ public:
 
   boolean begin(void);
 
-  void readMotionCount(int16_t *deltaX, int16_t *deltaY);
+  void readMotionCount(int16_t *deltaX, int16_t *deltaY, uint8_t *squal);
   void enableFrameBuffer();
   void readFrameBuffer(char *FBuffer);
 
