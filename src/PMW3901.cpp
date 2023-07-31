@@ -28,15 +28,15 @@
 #define CHIP_ID         0x49  // 01001001
 #define CHIP_ID_INVERSE 0xB6  // 10110110
 
-PMW3901::PMW3901(uint8_t cspin)
-  : _cs(cspin)
+PMW3901::PMW3901(uint8_t cspin, SPIClass* spi)
+  : _spi(spi), _cs(cspin)
 { }
 
 boolean PMW3901::begin(void) {
   // Setup SPI port
-  SPI.begin();
+  _spi->begin();
   pinMode(_cs, OUTPUT);
-  SPI.beginTransaction(SPISettings(4000000, MSBFIRST, SPI_MODE3));
+  _spi->beginTransaction(SPISettings(4000000, MSBFIRST, SPI_MODE3));
 
   // Make sure the SPI bus is reset
   digitalWrite(_cs, HIGH);
@@ -46,7 +46,7 @@ boolean PMW3901::begin(void) {
   digitalWrite(_cs, HIGH);
   delay(1);
 
-  SPI.endTransaction();
+  _spi->endTransaction();
 
   // Power on reset
   registerWrite(0x3A, 0x5A);
@@ -150,18 +150,18 @@ void PMW3901::readFrameBuffer(char *FBuffer)
 void PMW3901::registerWrite(uint8_t reg, uint8_t value) {
   reg |= 0x80u;
 
-  SPI.beginTransaction(SPISettings(4000000, MSBFIRST, SPI_MODE3));
+  _spi->beginTransaction(SPISettings(4000000, MSBFIRST, SPI_MODE3));
 
   digitalWrite(_cs, LOW);
 
   delayMicroseconds(50);
-  SPI.transfer(reg);
-  SPI.transfer(value);
+  _spi->transfer(reg);
+  _spi->transfer(value);
   delayMicroseconds(50);
 
   digitalWrite(_cs, HIGH);
 
-  SPI.endTransaction();
+  _spi->endTransaction();
 
   delayMicroseconds(200);
 }
@@ -169,21 +169,21 @@ void PMW3901::registerWrite(uint8_t reg, uint8_t value) {
 uint8_t PMW3901::registerRead(uint8_t reg) {
   reg &= ~0x80u;
 
-  SPI.beginTransaction(SPISettings(4000000, MSBFIRST, SPI_MODE3));
+  _spi->beginTransaction(SPISettings(4000000, MSBFIRST, SPI_MODE3));
 
   digitalWrite(_cs, LOW);
 
   delayMicroseconds(50);
-  SPI.transfer(reg);
+  _spi->transfer(reg);
   delayMicroseconds(50);
-  uint8_t value = SPI.transfer(0);
+  uint8_t value = _spi->transfer(0);
   delayMicroseconds(100);
 
   digitalWrite(_cs, HIGH);
 
   //delayMicroseconds(200);
 
-  SPI.endTransaction();
+  _spi->endTransaction();
 
   return value;
 }

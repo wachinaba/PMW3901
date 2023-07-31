@@ -24,12 +24,13 @@
 #define __PMW3901_H__
 
 #include "Arduino.h"
+#include <SPI.h>
 
 #include <stdint.h>
 
 class PMW3901 {
 public:
-  PMW3901(uint8_t cspin);
+  PMW3901(uint8_t cspin, SPIClass* spi = &SPI);
 
   boolean begin(void);
 
@@ -40,6 +41,8 @@ public:
   void setLed(bool ledOn);
 
 private:
+  SPIClass* _spi;
+
   uint8_t _cs;
 
   void registerWrite(uint8_t reg, uint8_t value);
